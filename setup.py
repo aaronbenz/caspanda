@@ -2,7 +2,7 @@ from setuptools import find_packages
 from setuptools import setup
 setup(
     name='caspanda',
-    version='0.0.0.1',
+    version='0.0.0.2',
     packages=find_packages(),
     install_requires=['cassandra-driver',
               'numpy',

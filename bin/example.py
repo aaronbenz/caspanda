@@ -8,9 +8,8 @@ session = cl.connect()
 session.execute("""CREATE KEYSPACE IF NOT EXISTS test WITH REPLICATION = { 'class' : 'SimpleStrategy',
                     'replication_factor' : 1 };""")
 session.set_keyspace("test")
-
 session.execute("""CREATE TABLE IF NOT EXISTS albums(
-                       id double PRIMARY KEY,
+                       id text PRIMARY KEY,
                        car text,
                        color text,
                        owner text,
@@ -26,7 +25,7 @@ tmp = CassandraFrame([["VIN1", "ford", "black", "frank"], ["VIN2", "cyrsler", "b
                                   columns = cols, session=session, table="albums")
 
 tmp.create_cql_insert
-tmp.insert
+tmp.insert()
 
 
 #session.execute("DROP TABLE albums;")
