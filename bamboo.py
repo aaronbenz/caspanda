@@ -1,11 +1,12 @@
-from caspanda.base import CassandraPanda
 from cassandra.cluster import Session
 from pandas import DataFrame
 import logging as log
+from Queue import Queue
+
 
 
 class CassandraFrame(DataFrame):
-    __prepared_columns = None
+    __prepared_columns__ = None
     statement_input = None
     __insert_index = None
 
@@ -17,6 +18,8 @@ class CassandraFrame(DataFrame):
         self.table = table
         self.cql = kwargs.get('cql', None)
         self.set_cql_columns(cql_columns)
+        self.insert_queue = Queue()
+
 
     def put(self, table=None):
         if table is not None:
@@ -37,31 +40,68 @@ class CassandraFrame(DataFrame):
 
         statement = "INSERT INTO " + self.table + "(" + paste(self.cql_columns) + ") VALUES (" + paste(["?"] * len(self.columns)) + ");"
         self.statement_input = self.session.prepare(statement)
-        self.__prepared_columns = self.cql_columns
+        self.__prepared_columns__ = self.cql_columns
         return 0
 
     def insert_sync(self):
-        assert self.__cql_columns==self.__prepared_columns
+        assert self.__cql_columns==self.__prepared_columns__
         if self.statement_input is None:
             raise ValueError('statement_input not defined. Use create_cql_insert()')
 
-        for index, row in self.loc[:,self.__prepared_columns].iterrows():
+        for index, row in self.loc[:,self.__prepared_columns__].iterrows():
             self.session.execute(self.statement_input.bind(row))
 
         return 0
 
-    def insert(self):
-        assert self.cql_columns==self.__prepared_columns
+
+    def insert_async(self):
+        assert self.cql_columns==self.__prepared_columns__
         if self.statement_input is None:
             raise ValueError('statement_input not defined. Use create_cql_insert()')
 
-        self.__insert_index = 0
+        def handle_success(rows):
+            pass
 
-        for i in range(min(120, self.__len__())):
-            self.handle_success(None)
+        def handle_error(exception):
+            log.error("Failed to send data info: %s", exception)
+            return 0
+
+        def put(i):
+            future = self.session.execute_async(self.statement_input.bind(self.loc[i, self.__prepared_columns__]))
+            future.add_callbacks(handle_success, handle_error)
+            return future
+
+        map(put, range(self.__len__()))
 
         return 0
-    sentinel = object()
+
+
+    def insert_callback(self):
+        assert self.cql_columns==self.__prepared_columns__
+        if self.statement_input is None:
+            raise ValueError('statement_input not defined. Use create_cql_insert()')
+
+        map(self.insert_queue.put_nowait, range(self.__len__()))
+
+        #for i in range(min(120, self.__len__())):
+        def handle_success(rows):
+            i = self.insert_queue.get()
+            print i, "\n", "-----------------------------------------------"
+
+            if i is None:
+                return 0
+            future = self.session.execute_async(self.statement_input.bind(self.loc[i, self.__prepared_columns__]))
+            future.add_callbacks(handle_success, handle_error)
+
+            return future
+
+        def handle_error(exception):
+            log.error("Failed to send data info: %s", exception)
+            future = handle_success(None)
+            return future
+
+        future = handle_success(None)
+        return future.result()
 
     # def insert_next(self, previous_result=sentinel):
         # if previous_result is not sentinel:
@@ -79,25 +119,7 @@ class CassandraFrame(DataFrame):
     #     insert_next()
 
     # finished_event.wait()
-    def handle_success(self, obj):
-        assert self.__insert_index is not None
 
-        if self.__insert_index < self.__len__():
-            i = self.__unique_index__()
-            future = self.session.execute_async(self.statement_input.bind(self.loc[i, self.__prepared_columns]))
-            future.add_callback(self.handle_success, self.handle_error)
-
-        return 0
-
-    def __unique_index__(self):
-        i = self.__insert_index
-        self.__insert_index = i + 1
-        return i
-
-    def handle_error(self, exception):
-        log.error("Failed to fetch data info: %s", exception)
-        self.handle_success()
-        return
 
 
 
@@ -124,6 +146,3 @@ class CassandraFrame(DataFrame):
 
 def paste(x, sep = ", "):
     return str(x).strip("[]").replace("'","").replace(", ", sep)
-
-
-

@@ -23,9 +23,10 @@ cols = ["id","car","color","owner"]
 
 tmp = CassandraFrame([["VIN1", "ford", "black", "frank"], ["VIN2", "cyrsler", "blue", "chris"], ["VIN3", "honda", "red", "harry"]],
                                   columns = cols, session=session, table="albums")
-
 tmp.create_cql_insert
-tmp.insert()
+print tmp.insert_async()
+
+cl.shutdown()
 
 
 #session.execute("DROP TABLE albums;")
