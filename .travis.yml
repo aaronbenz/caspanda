@@ -6,16 +6,17 @@ python:
   - "3.3"
   - "3.4"
 
+before_install:
+  pip install codecov
 
 services:
   - cassandra
 
 install:
   - pip install -e .
-  - pip install coveralls
-
+  
 # command to run tests
 script: nosetests
 
 after_success:
-  coveralls
+  codecov
