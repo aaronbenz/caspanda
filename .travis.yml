@@ -8,13 +8,14 @@ python:
 
 before_install:
   pip install codecov
+  pip install coverage
 
 services:
   - cassandra
 
 install:
   - pip install -e .
-  - coverage run setup.py test
+  - coverage run --source=caspanda setup.py test
   
 # command to run tests
 script: nosetests
