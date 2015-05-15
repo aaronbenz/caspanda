@@ -15,10 +15,11 @@ services:
 
 install:
   - pip install -e .
-  - coverage run --source=caspanda setup.py test
-  
+
 # command to run tests
-script: nosetests
+script:
+  - coverage run --include='caspanda/*' $(which py.test)
+
 
 after_success:
   codecov
