@@ -1,5 +1,5 @@
 from cassandra.cluster import Cluster, _shutdown_cluster
-from bamboo import CassandraFrame
+from caspanda.bamboo import CassandraFrame
 
 class InputError(Exception):
     pass

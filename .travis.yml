@@ -7,17 +7,20 @@ python:
   - "3.4"
 
 before_install:
-  pip install codecov
+  - pip install codecov
+  - pip install coverage
+  - pip install pytest-cov
 
 services:
   - cassandra
 
 install:
   - pip install -e .
-  - coverage run setup.py test
-  
+
 # command to run tests
-script: nosetests
+script:
+  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]] ; then coverage run --include='caspanda/*' $(which py.test) ; coverage report; fi
+
 
 after_success:
-  codecov
+  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; codecov ; fi

@@ -5,9 +5,9 @@ import numpy as np
 cl = Cluster()
 session = cl.connect()
 
-session.execute("""CREATE KEYSPACE IF NOT EXISTS test WITH REPLICATION = { 'class' : 'SimpleStrategy',
+session.execute("""CREATE KEYSPACE IF NOT EXISTS tests WITH REPLICATION = { 'class' : 'SimpleStrategy',
                     'replication_factor' : 1 };""")
-session.set_keyspace("test")
+session.set_keyspace("tests")
 session.execute("""CREATE TABLE IF NOT EXISTS albums(
                        id text PRIMARY KEY,
                        car text,
