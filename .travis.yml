@@ -19,7 +19,7 @@ install:
 
 # command to run tests
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coverage run --include='caspanda/*' $(which py.test)
+  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]] ; then coverage run --include='caspanda/*' $(which py.test) ; coverage report; fi
 
 
 after_success:
