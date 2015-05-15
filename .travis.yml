@@ -19,6 +19,9 @@ install:
 
 # command to run tests
 script:
+  - echo '[pytest]' > pytest.ini
+  - echo 'addopts = -vv -r sxX --doctest-modules --doctest-ignore-import-errors --doctest-glob='*.rst' --pyargs blaze docs' >> pytest.ini
+  - echo 'norecursedirs = docs/source/scripts' >> pytest.ini
   - coverage run --include='caspanda/*' $(which py.test)
 
 
