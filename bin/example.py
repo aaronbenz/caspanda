@@ -1,7 +1,18 @@
-from caspanda.bamboo import CassandraFrame, paste
-from pandas import DataFrame
-from cassandra.cluster import Cluster, Session
+###################################################
+#################[ Script: Example ]################
+###################################################
+"""
+Start a cassandra cluster and demonstrate inserting a CassandraFrame.
+"""
 import numpy as np
+import pandas as pd
+from cassandra.cluster import Cluster
+from cassandra.cluster import Session
+
+from caspanda.bamboo import CassandraFrame
+from caspanda.utils import paste
+
+
 cl = Cluster()
 session = cl.connect()
 
@@ -18,7 +29,8 @@ session.execute("""CREATE TABLE IF NOT EXISTS albums(
                     );""")
 
 cols = ["id","car","color","owner"]
-#df = DataFrame(range(1,5), columns=["a"])
+
+#df = pd.DataFrame(range(1,5), columns=["a"])
 #tmp = CassandraFrame(np.random.randn(10, 2), columns=["id",""], session = session, table="albums")
 
 tmp = CassandraFrame([["VIN1", "ford", "black", "frank"], ["VIN2", "cyrsler", "blue", "chris"], ["VIN3", "honda", "red", "harry"]],
