@@ -16,7 +16,7 @@ class BaseTestInput(unittest.TestCase):
 
     Connects to database.
     """  
-    def __init__(self):
+    def setUp(self):
         self.cl = CassandraPanda()
         self.session = self.cl.connect()
         self.session.execute("""CREATE KEYSPACE IF NOT EXISTS tests WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1 };""")
@@ -32,10 +32,13 @@ class BaseTestInput(unittest.TestCase):
 
         self.cols = ["id","car","color","owner"]
 
+        super(BaseTestInput, self).setUp()
 
 class TestQuery(BaseTestInput):
 
     def setUp(self):
+        super(TestQuery, self).setUp()
+
         self.frame = CassandraFrame([["VIN1", "ford", "black", "frank"],
                                      ["VIN2", "cyrsler", "blue", "chris"],
                                      ["VIN3", "honda", "red", "harry"]],
@@ -44,13 +47,15 @@ class TestQuery(BaseTestInput):
         self.frame.create_cql_insert()
 
 
+
+
     def test_all_attributes(self):
         self.frame.insert_async()
-        self.cf = session.execute("SELECT * FROM tester")
+        self.cf = self.session.execute("SELECT * FROM tester")
 
         self.assertEqual(len(self.cf), 3)
         self.assertIsInstance(self.cf, CassandraFrame)
-        self.assertEqual(self.tmp.session, self.cf.session)
+        self.assertEqual(self.frame.session, self.cf.session)
 
 
 

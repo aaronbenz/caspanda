@@ -13,9 +13,9 @@ import logging
 import pandas as pd
 from Queue import Queue
 from Queue import Empty
-
 from cassandra.cluster import Session
-from cassandra.utils import paste
+
+from caspanda.utils import paste
 
 
 class CassandraFrame(pd.DataFrame):
@@ -118,7 +118,7 @@ class CassandraFrame(pd.DataFrame):
 
     def insert_callback(self):
         """
-        TODO: code the upper limit on concurrent futures, clean up (and deprecate insert_async()?)
+        TODO: code the upper limit on concurrent futures, clean up (and deprecate insert_async??)
 
         Put row indices into a queue; 
         while the queue is not empty and the upper threshold on number of concurrent waiting processes is not reached,

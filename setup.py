@@ -10,6 +10,8 @@ setup(
         'cassandra-driver',
         'numpy',
         'pandas',
+	'nose',
+	'blist',
     ],
     url='',
     license='MIT',
