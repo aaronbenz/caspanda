@@ -15,13 +15,11 @@ Spring 2015
 
 caspanda
 ========
-
 Pandas interface for Cassandra.
 
 
 Installation
 ------------
-
 `$ python setup.py install`
 
 should suffice to process dependencies for most users. 
@@ -33,14 +31,16 @@ You'll also need Cassandra:
 
 Usage
 -----
-
-TODO: usage examples
+TODO: usage examples  
 
 
 TODO
-----
-* `grep -r TODO .`
+----  
+* `grep -r TODO .`  
+* brainstorm naming convention for CassandraPanda--  
+  not really clear what it's for / why it's needed from the name  
 * 
+
 
 
 
