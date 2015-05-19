@@ -55,7 +55,6 @@ class CassandraFrame(pd.DataFrame):
         pass
 
 
-    @property
     def create_cql_insert(self):
         """
         Given a table, prepares a statement to allow the dataframe to be inserted row by row into cassandra.
@@ -119,7 +118,7 @@ class CassandraFrame(pd.DataFrame):
 
     def insert_callback(self):
         """
-        TODO: code in the upper limit on concurrent futures, clean up (and deprecate insert_async()?)
+        TODO: code the upper limit on concurrent futures, clean up (and deprecate insert_async()?)
 
         Put row indices into a queue; 
         while the queue is not empty and the upper threshold on number of concurrent waiting processes is not reached,

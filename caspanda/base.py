@@ -13,10 +13,6 @@ from cassandra.cluster import _shutdown_cluster
 from caspanda.bamboo import CassandraFrame
 
 
-class InputError(Exception):
-    pass
-
-
 class CassandraPanda(Cluster):
     """
     Interface for pandas and Cassandra.

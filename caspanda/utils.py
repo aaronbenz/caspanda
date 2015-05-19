@@ -6,7 +6,7 @@ Miscellaneous utilities for caspanda.
 """
 
 
-def paste(x, sep = ", "):
+def paste(x, sep=", "):
     """
     Custom string formatting function to format (???) output.
     """
