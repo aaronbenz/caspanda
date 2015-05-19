@@ -34,6 +34,15 @@ Usage
 TODO: usage examples  
 
 
+Tests
+-----
+There are some unit and integration tests in the `caspanda/tests/` directory.
+
+Run from the command line with
+
+`$ nosetests`
+
+
 TODO
 ----  
 * `grep -r TODO .`  
