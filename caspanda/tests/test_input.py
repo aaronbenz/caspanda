@@ -6,7 +6,7 @@ Test inserting CassandraFrame into Cassandra and ensure database get returns exp
 """
 import unittest
 
-from caspanda.base import CassandraPanda
+from caspanda.bear import CasPanda
 from caspanda.bamboo import CassandraFrame
 
 
@@ -17,7 +17,7 @@ class BaseTestInput(unittest.TestCase):
     Connects to database.
     """  
     def setUp(self):
-        self.cl = CassandraPanda()
+        self.cl = CasPanda()
         self.session = self.cl.connect()
         self.session.execute("""CREATE KEYSPACE IF NOT EXISTS tests WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1 };""")
         self.session.set_keyspace("tests")
