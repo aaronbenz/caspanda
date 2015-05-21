@@ -6,7 +6,7 @@ Testing the describe functions and those in spots.py
 import unittest
 
 from caspanda.bear import CasPanda
-from caspanda.bamboo import CassandraFrame
+from caspanda.spots import describe
 
 class BaseTestInput(unittest.TestCase):
     """
@@ -23,4 +23,7 @@ class TestQuery(BaseTestInput):
 
     def setUp(self):
         super(TestQuery, self).setUp()
+        schema_columns={}
 
+    def test_single_table(self):
+        pass

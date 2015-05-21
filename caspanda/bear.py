@@ -15,9 +15,12 @@ class CasPanda(Cluster):
     """
     Interface for pandas and Cassandra.
     """
-    def __init__(self, *args, **kwargs):
-        super(CasPanda, self).__init__(*args, **kwargs)
+    keyspaces = None # contains all of the MetaKeyspaces info
 
+
+    def __init__(self, *args, **kwargs):
+
+        super(CasPanda, self).__init__(*args, **kwargs)
     def connect(self, kp=None):
         """
         Create `cassandra.cluster.Cluster` session, 
@@ -28,6 +31,9 @@ class CasPanda(Cluster):
 
         self.session = super(CasPanda, self).connect(kp)
         self.session.row_factory = self.panda_factory
+        if self.keyspaces is None:
+            self._sync_metadata(kp)
+
         return self.session
 
     def panda_factory(self, colnames, rows):
@@ -42,6 +48,23 @@ class CasPanda(Cluster):
     def describe(self, kp=None, tb=None):
 
         pass
+
+    def _sync_metadata(self, kp):
+        """
+        Syncs all of the metadata keyspaces and their underlying tables and columns. Sets keyspace to be a dict
+        of all MetaKeyspace in the connection by name:MetaKeyspace
+        :return:
+        """
+        if kp is None:
+            kp = self.session.execute("SELECT DISTINCT keyspace_name FROM system.schema_columns")["keyspace_name"]
+            kp = list(kp)
+
+        for i in kp:
+            pass
+
+
+
+
 
 
 
