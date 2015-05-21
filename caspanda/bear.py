@@ -2,9 +2,7 @@
 #################[ Module: Base ]##################
 ###################################################
 """
-TODO: DEPRECATED??
-
-Class CassandraPanda, which subclasses cassandra.cluster.Cluster
+Class CasPanda, which subclasses cassandra.cluster.Cluster
 and provides an interface between pandas and Cassandra.
 """
 from cassandra.cluster import Cluster
@@ -13,14 +11,14 @@ from cassandra.cluster import _shutdown_cluster
 from caspanda.bamboo import CassandraFrame
 
 
-class CassandraPanda(Cluster):
+class CasPanda(Cluster):
     """
     Interface for pandas and Cassandra.
     """
     def __init__(self, *args, **kwargs):
-        super(CassandraPanda, self).__init__(*args, **kwargs)
+        super(CasPanda, self).__init__(*args, **kwargs)
 
-    def connect(self, keyspace=None):
+    def connect(self, kp=None):
         """
         Create `cassandra.cluster.Cluster` session, 
         and patch `session.row_factory` with `self.panda_factory`.
@@ -28,7 +26,7 @@ class CassandraPanda(Cluster):
         :return: Session object
         """
 
-        self.session = super(CassandraPanda, self).connect(keyspace)
+        self.session = super(CasPanda, self).connect(kp)
         self.session.row_factory = self.panda_factory
         return self.session
 
@@ -40,4 +38,11 @@ class CassandraPanda(Cluster):
         :return: Panda DataFrame
         """
         return CassandraFrame(rows, columns=colnames, session=self.session)
+
+    def describe(self, kp=None, tb=None):
+
+        pass
+
+
+
 
