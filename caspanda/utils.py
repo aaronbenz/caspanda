@@ -4,7 +4,7 @@
 """
 Miscellaneous utilities for caspanda.
 """
-import caspanda.metabear
+
 
 def paste(x, sep=", "):
     """
@@ -12,12 +12,21 @@ def paste(x, sep=", "):
     """
     return str(x).strip("[]").replace("'","").replace(", ", sep)
 
-def print_ls(ls, ident = '', braces=1):
-    """ Recursively prints nested lists."""
+
+def print_ls(ls, ident='', braces=1):
+    """
+    Recursively prints nested lists.
+
+    :param ls: list, arbitrarily nested
+    :return: multiline string illustrating structure
+
+    """
     out = ""
+
     for value in ls:
         if isinstance(value, list):
             out = out + print_ls(value, ident+'\t', braces+1)
-        else:
-            out = out + ident+'%s' %(value.name if isinstance(value, caspanda.metabear.ColumnMeta) else value) + '\n'
+        else:  # "leaf" value
+            out = out + ident + '{}'.format(value.name if hasattr(value, "name") else value) + '\n'
+
     return out

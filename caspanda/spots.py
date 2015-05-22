@@ -1,9 +1,16 @@
+###################################################
+#################[ Module: Spots ]#################
+###################################################
 """
-A Panda has spots, and so does data. This is meant to define ways to more easily view caspanda data
-"""
+A Panda has spots, and so does data. 
 
-from cassandra.metadata import TableMetadata, KeyspaceMetadata
-from exceptions import InputError
+This module provides utilities for pretty-printing and exposing the internal structure of data fetched from Cassandra.
+"""
+from cassandra.metadata import TableMetadata
+from cassandra.metadata import KeyspaceMetadata
+
+from caspanda.exceptions import InputError
+
 
 def describe(x):
     """
@@ -15,6 +22,7 @@ def describe(x):
 
     raise(InputError)
     pass
+
 
 def _describe_table(x):
     """

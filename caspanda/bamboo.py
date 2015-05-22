@@ -11,9 +11,10 @@ in order to support pivot- and melt-like operations.
 """
 import logging
 import pandas as pd
+from cassandra.cluster import Session
 from Queue import Queue
 from Queue import Empty
-from cassandra.cluster import Session
+
 
 from caspanda.utils import paste
 

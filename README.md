@@ -45,12 +45,8 @@ Run from the command line with
 
 TODO
 ----  
-* `grep -r TODO .`  
-* brainstorm naming convention for CassandraPanda--  
-  not really clear what it's for / why it's needed from the name  
-* 
-
-
+* `$ grep -r TODO .`
+* `create_cql_insert()` should return the string, and `insert_` methods should call it and execute the string
 
 
 
