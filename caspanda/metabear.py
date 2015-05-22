@@ -2,8 +2,6 @@
 This file is meant to some valuable information about a cassandra table
 """
 
-from caspanda.bear import CasPanda
-
 class ColumnMeta(object):
     keyspace = None
     """
@@ -19,9 +17,9 @@ class ColumnMeta(object):
     """
     The name of the column
     """
-    ###Todo add the rest of arguments
+    # TODO: add the rest of arguments
 
-    def __init__(self, keyspace_name, columnfamily_name, column_name, component_index=None, index_name=None, index_options=None, index_type=None, cql_type=None):
+    def __init__(self, keyspace_name, columnfamily_name, column_name, component_index=None, index_name=None, index_options=None, index_type=None, cql_type=None, validator=None):
         self.keyspace = keyspace_name
         self.table = columnfamily_name
         self.name = column_name
@@ -31,72 +29,60 @@ class ColumnMeta(object):
         self.index_type = index_type
         self.cql_type = cql_type
 
-    def _sync(self):
-        """
-        using the keyspace, table, and name, syncs the rest of the column values
-        :return: None
-        """
-        pass
-
     def describe(self):
         """
         Describes the column in a print friendly manner
         :return:
         """
         pass
-
-
 class TableMeta(object):
     keyspace = None
     name = None
-    ###Todo fill in the rest of the TableMeta arguments
+    columns = {}
 
-    def __init__(self, keyspace_name, columnfamily_name, columns=None):
+
+    def __init__(self, keyspace_name, name, columns=None):
         self.keyspace = keyspace_name
-        self.name = columnfamily_name
-        self.columns = [] if columns is None else columns
+        self.name = name
+        self.columns = {} if columns is None else columns
 
-    def get_partition_keys(self):
-        """
-        Gets the partition keys based off of the ColumnMeta object's "type" variable == "partition_key"
-        :return:
-        """
-        pass
+    def add_column(self, x):
+        self.columns.append(x)
 
-    def _sync(self):
-        """
-        Syncs up the TableMeta with the information in Cassandra based on the keyspace and table name
-        :return:
-        """
-        pass
+    def categorize_columns(self):
+        partition_cols = []
+        clustering_cols = []
+        regular_cols = []
+        static_cols = []
 
-    def describe(self):
-        """
-        Describes the table in a print friendly manner
-        :return:
-        """
-        pass
+        for i in self.columns.itervalues():
+            if i.cql_type == "partition_key":
+                partition_cols.append(i)
+                next
+            if i.cql_type == "clustering_key":
+                clustering_cols.append(i)
+                next
+            if i.cql_type == "regular":
+                regular_cols.append(i)
+                next
+            if i.cql_type == "static":
+                static_cols.append(i)
+                next
+
+
+
+        return([partition_cols,[clustering_cols, [regular_cols], static_cols]])
 
 class KeyspaceMeta(object):
     name = None
-    tables = None
-    ###Todo fill in the rest of the arguments for keyspace
+    tables = {}
+    # TODO: fill in the rest of the arguments for keyspace
 
-    def __init__(self, name):
+    def __init__(self, name, tables=None):
         self.name = name
+        self.tables = {} if tables is None else tables
 
-    def _sync(self):
-        """
-        Sync up the Keyspace with the information in Cassandra based on the keyspace name
-        :return:
-        """
-        pass
-
-    def describe(self):
-        """
-        Describes the keyspace's tables in a print friendly manner
-        :return:
-        """
-        pass
+    def add_table(self, x):
+        self.tables.append(x)
 
 

@@ -6,14 +6,12 @@ Start a cassandra cluster and demonstrate inserting a CassandraFrame.
 """
 import numpy as np
 import pandas as pd
-from cassandra.cluster import Cluster
-from cassandra.cluster import Session
-
+from caspanda.bear import CasPanda
 from caspanda.bamboo import CassandraFrame
 from caspanda.utils import paste
 
 
-cl = Cluster()
+cl = CasPanda()
 session = cl.connect()
 
 session.execute("""CREATE KEYSPACE IF NOT EXISTS tests WITH REPLICATION = { 'class' : 'SimpleStrategy',
