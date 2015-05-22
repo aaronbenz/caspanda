@@ -1,6 +1,7 @@
 """
 This file is meant to some valuable information about a cassandra table
 """
+from caspanda.utils import paste, print_ls
 
 class ColumnMeta(object):
     keyspace = None
@@ -49,6 +50,17 @@ class TableMeta(object):
     def add_column(self, x):
         self.columns.append(x)
 
+    def describe(self, *args, **kwargs):
+        """ Recursively prints nested lists."""
+        return print_ls(self.categorize_columns())
+
+    def sort_columns(self, x, reverse = False):
+        seq = []
+        for i in x:
+            seq.append((i.component_index, i))
+        seq.sort(reverse=reverse)
+        return [x[1] for x in seq]
+
     def categorize_columns(self):
         partition_cols = []
         clustering_cols = []
@@ -69,9 +81,15 @@ class TableMeta(object):
                 static_cols.append(i)
                 next
 
+        partition_cols = self.sort_columns(partition_cols)
+        clustering_cols = self.sort_columns(clustering_cols, reverse=True)
+        cluster_str = regular_cols
+        for i in clustering_cols:
+            cluster_str = [i, cluster_str]
 
+        partition_cols = paste([i.name for i in partition_cols])
 
-        return([partition_cols,[clustering_cols, [regular_cols], static_cols]])
+        return partition_cols,[cluster_str, static_cols]
 
 class KeyspaceMeta(object):
     name = None
