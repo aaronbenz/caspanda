@@ -16,4 +16,12 @@ def describe(x):
     raise(InputError)
     pass
 
+def _describe_table(x):
+    """
+    Describes a single TableMetaData table
+    :param x: TableMetaData
+    :return: dict describing x layout
+    """
+
+
 
