@@ -9,8 +9,10 @@ from caspanda.bamboo import CassandraFrame
 
 cl = CasPanda()
 session = cl.connect()
-
-session.execute("""CREATE TABLE IF NOT EXISTS tests.sold_cars (
+session.execute("""CREATE KEYSPACE IF NOT EXISTS tests WITH REPLICATION = { 'class' : 'SimpleStrategy',
+                    'replication_factor' : 1 };""")
+session.set_keyspace("tests")
+session.execute("""CREATE TABLE IF NOT EXISTS sold_cars (
     make text,
     state text,
     day timestamp,
@@ -21,9 +23,6 @@ session.execute("""CREATE TABLE IF NOT EXISTS tests.sold_cars (
     account_lead text static,
     distributor_lead text static,
     PRIMARY KEY ((make, state), day, event_time));""")
-session.execute("""CREATE KEYSPACE IF NOT EXISTS tests WITH REPLICATION = { 'class' : 'SimpleStrategy',
-                    'replication_factor' : 1 };""")
-session.set_keyspace("tests")
 session.execute("""CREATE TABLE IF NOT EXISTS albums(
                        id text PRIMARY KEY,
                        car text,
@@ -53,20 +52,10 @@ print cl.keyspaces["tests"].tables["albums"].describe()
 print "As opposed to this:"
 print cl.metadata.keyspaces["tests"].tables["albums"].export_as_string()
 
-print "-----------------------------------------"
-print "Another comparison"
-print cl.keyspaces["system"].tables["schema_columns"].describe()
-print "As opposed to this:"
-print cl.metadata.keyspaces["system"].tables["schema_columns"].export_as_string()
-print "-----------------------------------------"
-
-
 print "Another comparison"
 print cl.keyspaces["tests"].tables["sold_cars"].describe()
 print "As opposed to this:"
 print cl.metadata.keyspaces["tests"].tables["sold_cars"].export_as_string()
-
-
 
 
 cl.shutdown()

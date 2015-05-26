@@ -4,13 +4,15 @@
 """
 Miscellaneous utilities for caspanda.
 """
-import caspanda.metabear
 
 def paste(x, sep=", "):
     """
     Custom string formatting function to format (???) output.
     """
-    return str(x).strip("[]").replace("'","").replace(", ", sep)
+    out = ""
+    for i in x:
+        out += i + sep
+    return out.strip(sep)
 
 def print_ls(ls, ident = '', braces=1):
     """ Recursively prints nested lists."""
@@ -19,5 +21,5 @@ def print_ls(ls, ident = '', braces=1):
         if isinstance(value, list):
             out = out + print_ls(value, ident+'\t', braces+1)
         else:
-            out = out + ident+'%s' %(value.name if isinstance(value, caspanda.metabear.ColumnMeta) else value) + '\n'
+            out = out + ident+'%s' %(value if isinstance(value, basestring) else value.name) + '\n'
     return out
