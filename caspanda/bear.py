@@ -12,7 +12,7 @@ from cassandra.cluster import _shutdown_cluster
 
 from caspanda.bamboo import CassandraFrame
 
-
+#TODO: Add describe function to name any keyspace or keyspace + table(s) to utilize MetaTable.describe function
 class CasPanda(Cluster):
     """
     Interface for pandas and Cassandra.
@@ -61,6 +61,7 @@ class CasPanda(Cluster):
         """
 
         self.keyspaces = {}
+        #TODO: Turn off warnings when this occurs
         self.session.row_factory = dict_factory
 
         #gets all of the column data for all tables/keyspaces
