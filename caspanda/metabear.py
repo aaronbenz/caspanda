@@ -91,6 +91,7 @@ class TableMeta(object):
 
         return partition_cols,[cluster_str, static_cols]
 
+#TODO utilize TableMeta.describe to implement the same thing for keyspaces
 class KeyspaceMeta(object):
     name = None
     tables = {}

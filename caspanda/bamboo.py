@@ -166,7 +166,7 @@ class CassandraFrame(pd.DataFrame):
     def get_cql_columns(self):
         return self._cql_columns
 
-
+#TODO Redo these operations to run off of the meta data just built from metabear.py
     def set_cql_columns(self, x=None):
         if x is None:
             self._cql_columns = self.columns.tolist()
