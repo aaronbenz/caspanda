@@ -36,17 +36,18 @@ Here are a few of the things caspanda currently does:
 
 Usage
 ----
-One of the main things that Caspandas is about, is being able to easily understand and use Cassandra. Unfortunately,
+One of the main objectives of **Caspandas** is being able to easily understand and use Cassandra. Unfortunately,
  many can be misled or lack the understanding of how Cassandra actually stores it's data. The attempt below is meant to 
  give you a conceptual understanding of the hierarchy that the data is really stored in.  
  
  The example table `sold_cars` demonstrates a data model that might exist if you wanted to store the information about
- sold cars. It breaks down the information about that sale according the the *make* and *state* of the car, and then 
- stores the information by day and time. So, the query pattern would specify the make, state, and give you the ability 
- to choose a date range. 
+ sold cars. It stores information about a sale according to the *make* and *state* of the car, and then 
+ stores the information by day and time. So, the query pattern would specify the *make* and *state*, and then give you 
+ the ability to choose a date range. 
  
  Conceptually this might make since, but the way in which it is written down in CQL if often difficult to grasp for anyone
- not seasoned in Cassandra. So, we have tried to make this much more simple.
+ not seasoned in Cassandra. So, we have tried to make this much more simple. First, connect to Cassandra and create the
+ table `sold_cars`
 ```python
 from caspanda.bear import CasPanda
 
@@ -68,9 +69,9 @@ session.execute("""CREATE TABLE IF NOT EXISTS sold_cars (
     PRIMARY KEY ((make, state), day, event_time));""")
 ```
 
-Caspanda Pretty Print/Description of that table. Again, this breaks down the names of the columns in a hierarchical
+Now that the table has been created, let's visualize it. This breaks down the names of the columns in a hierarchical
 fashion that demonstrates how it is actually stored. So for example, The *make* and *state* columns define a group of data.
-That group is ordered by *day*. For each *day*, day is stored and ordered by *event_time*. Then, for each *event_time*,
+That group is ordered and stored by *day*, and then by *event_time*. Then, for each *event_time*,
 there are fields for a *dealership*, *year*, and *salesman*. Additionally, there is a single value column stored on the
 same level as *day*, which is *distributor* and *account_lead*. 
 
@@ -127,15 +128,12 @@ print cl.metadata.keyspaces["tests"].tables["sold_cars"].export_as_string()
 
 With that being said, please feel free to reach out to us for comments/suggestions/questions. 
 
-There are also some more examples for calling data from Cassandra and inserting back using only a Pandas Dataframe (which
+There are also some more examples for calling data from Cassandra and inserting it back using only a Pandas Dataframe (which
 we called a CassandraFrame), in `bin/example.py`
 
 Installation
 ----
-`$ python setup.py install`
-
-should suffice to process dependencies for most users. 
-
+`$ python setup.py install` or `$ pip install -e .`
 You'll also need Cassandra:
 
 `$ brew install cassandra`
