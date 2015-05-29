@@ -151,10 +151,7 @@ Run from the command line with
 
 TODO
 ----  
-* `grep -r TODO .`  
-* brainstorm naming convention for CassandraPanda--  
-  not really clear what it's for / why it's needed from the name  
-* 
+* `grep -r TODO .`
 
 
 
