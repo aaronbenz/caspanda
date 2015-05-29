@@ -36,6 +36,17 @@ Here are a few of the things caspanda currently does:
 
 Usage
 ----
+One of the main things that Caspandas is about, is being able to easily understand and use Cassandra. Unfortunately,
+ many can be misled or lack the understanding of how Cassandra actually stores it's data. The attempt below is meant to 
+ give you a conceptual understanding of the hierarchy that the data is really stored in.  
+ 
+ The example table `sold_cars` demonstrates a data model that might exist if you wanted to store the information about
+ sold cars. It breaks down the information about that sale according the the *make* and *state* of the car, and then 
+ stores the information by day and time. So, the query pattern would specify the make, state, and give you the ability 
+ to choose a date range. 
+ 
+ Conceptually this might make since, but the way in which it is written down in CQL if often difficult to grasp for anyone
+ not seasoned in Cassandra. So, we have tried to make this much more simple.
 ```python
 from caspanda.bear import CasPanda
 
@@ -57,7 +68,15 @@ session.execute("""CREATE TABLE IF NOT EXISTS sold_cars (
     PRIMARY KEY ((make, state), day, event_time));""")
 ```
 
-Caspanda Pretty Print/Description of that table:
+Caspanda Pretty Print/Description of that table. Again, this breaks down the names of the columns in a hierarchical
+fashion that demonstrates how it is actually stored. So for example, The *make* and *state* columns define a group of data.
+That group is ordered by *day*. For each *day*, day is stored and ordered by *event_time*. Then, for each *event_time*,
+there are fields for a *dealership*, *year*, and *salesman*. Additionally, there is a single value column stored on the
+same level as *day*, which is *distributor* and *account_lead*. 
+
+Said differently, for every *make* and *state*, there is one *distributor_lead* and one *account_lead*. Also, for every
+*make* and *state*, there can be a combination of *dealership*, *year*, and *salesman* defined by (indexed by) a *day*
+and then by an *event_time*
 
 ```python
 
@@ -73,7 +92,7 @@ print cl.keyspaces["tests"].tables["albums"].describe()
 #		account_lead
 ```
 
-As opposed to this:
+The traditional method for viewing this in CQL is this:
 
 ```python
 
@@ -105,6 +124,11 @@ print cl.metadata.keyspaces["tests"].tables["sold_cars"].export_as_string()
 #    AND read_repair_chance = 0.0
 #    AND speculative_retry = '99.0PERCENTILE';
 ```
+
+With that being said, please feel free to reach out to us for comments/suggestions/questions. 
+
+There are also some more examples for calling data from Cassandra and inserting back using only a Pandas Dataframe (which
+we called a CassandraFrame), in `bin/example.py`
 
 Installation
 ----
