@@ -2,7 +2,7 @@
 This file is meant to some valuable information about a cassandra table
 """
 from caspanda.utils import paste, print_ls
-
+from cassandra.cqltypes import lookup_casstype
 class ColumnMeta(object):
     keyspace = None
     """
@@ -29,13 +29,11 @@ class ColumnMeta(object):
         self.index_options = index_options
         self.index_type = index_type
         self.cql_type = cql_type
+        self.validator = validator
 
-    def describe(self):
-        """
-        Describes the column in a print friendly manner
-        :return:
-        """
-        pass
+    def __repr__(self):
+        return "{0} {1} {2}".format(self.name, lookup_casstype(self.validator).typename, self.cql_type if self.cql_type!="regular" else "")
+
 class TableMeta(object):
     keyspace = None
     name = None
@@ -50,7 +48,7 @@ class TableMeta(object):
     def add_column(self, x):
         self.columns.append(x)
 
-    def describe(self, *args, **kwargs):
+    def __repr__(self, *args, **kwargs):
         """ Recursively prints nested lists."""
         return print_ls(self.categorize_columns())
 
@@ -62,34 +60,34 @@ class TableMeta(object):
         return [x[1] for x in seq]
 
     def categorize_columns(self):
-        partition_cols = []
-        clustering_cols = []
-        regular_cols = []
-        static_cols = []
+        self.partition_cols = []
+        self.clustering_cols = []
+        self.regular_cols = []
+        self.static_cols = []
 
         for i in self.columns.itervalues():
             if i.cql_type == "partition_key":
-                partition_cols.append(i)
+                self.partition_cols.append(i)
                 next
             if i.cql_type == "clustering_key":
-                clustering_cols.append(i)
+                self.clustering_cols.append(i)
                 next
             if i.cql_type == "regular":
-                regular_cols.append(i)
+                self.regular_cols.append(i)
                 next
             if i.cql_type == "static":
-                static_cols.append(i)
+                self.static_cols.append(i)
                 next
 
-        partition_cols = self.sort_columns(partition_cols)
-        clustering_cols = self.sort_columns(clustering_cols, reverse=True)
-        cluster_str = regular_cols
-        for i in clustering_cols:
+        self.partition_cols = self.sort_columns(self.partition_cols)
+        self.clustering_cols = self.sort_columns(self.clustering_cols, reverse=True)
+        cluster_str = self.regular_cols
+        for i in self.clustering_cols:
             cluster_str = [i, cluster_str]
 
-        partition_cols = paste([i.name for i in partition_cols])
+        #partition_cols = paste([i.name for i in partition_cols])
 
-        return partition_cols,[cluster_str, static_cols]
+        return self.partition_cols,[cluster_str, self.static_cols]
 
 #TODO utilize TableMeta.describe to implement the same thing for keyspaces
 class KeyspaceMeta(object):

@@ -48,12 +48,12 @@ print "Now see that the data was inserted"
 session.execute("""SELECT id, car, color, owner FROM tests.albums""")
 
 print "The description of tests.albumns:"
-print cl.keyspaces["tests"].tables["albums"].describe()
+print cl.keyspaces["tests"].tables["albums"]
 print "As opposed to this:"
 print cl.metadata.keyspaces["tests"].tables["albums"].export_as_string()
 
 print "Another comparison"
-print cl.keyspaces["tests"].tables["sold_cars"].describe()
+print cl.keyspaces["tests"].tables["sold_cars"]
 print "As opposed to this:"
 print cl.metadata.keyspaces["tests"].tables["sold_cars"].export_as_string()
 

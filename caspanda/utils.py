@@ -21,5 +21,17 @@ def print_ls(ls, ident = '', braces=1):
         if isinstance(value, list):
             out = out + print_ls(value, ident+'\t', braces+1)
         else:
-            out = out + ident+'%s' %(value if isinstance(value, basestring) else value.name) + '\n'
+            #out = out + ident+'%s' %(value if isinstance(value, basestring) else value.name) + '\n'
+            out = out + ident+'%s' %(value) + '\n'
+
     return out
+
+def is_instance_multiple(x, obj_class):
+    """
+    Checks isinstance of multiple objects to save time. Does nothing if it is none
+    :param x: objects
+    :param obj_class: class of object
+    :return:
+    """
+    assert isinstance(x, list)
+    assert isinstance(obj_class, list)

@@ -81,16 +81,17 @@ and then by an *event_time*
 
 ```python
 
-print cl.keyspaces["tests"].tables["albums"].describe()
+print cl.keyspaces["tests"].tables["albums"]
 
-#make, state
-#		day
-#			event_time
-#				dealership
-#				year
-#				salesman
-#		distributor_lead
-#		account_lead
+#	make text partition_key
+#	state text partition_key
+#		day timestamp clustering_key
+#			event_time timestamp clustering_key
+#				dealership text 
+#				year int 
+#				salesman text 
+#		distributor_lead text static
+#		account_lead text static
 ```
 
 The traditional method for viewing this in CQL is this:
@@ -110,20 +111,6 @@ print cl.metadata.keyspaces["tests"].tables["sold_cars"].export_as_string()
 #    salesman text,
 #    year int,
 #    PRIMARY KEY ((make, state), day, event_time)
-#) WITH CLUSTERING ORDER BY (day ASC, event_time ASC)
-#    AND bloom_filter_fp_chance = 0.01
-#    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
-#    AND comment = ''
-#    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
-#    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
-#    AND dclocal_read_repair_chance = 0.1
-#    AND default_time_to_live = 0
-#    AND gc_grace_seconds = 864000
-#    AND max_index_interval = 2048
-#    AND memtable_flush_period_in_ms = 0
-#    AND min_index_interval = 128
-#    AND read_repair_chance = 0.0
-#    AND speculative_retry = '99.0PERCENTILE';
 ```
 
 With that being said, please feel free to reach out to us for comments/suggestions/questions. 

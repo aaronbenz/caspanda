@@ -83,6 +83,9 @@ class CasPanda(Cluster):
             #finally add/overwrite column into table
             tb = kp.tables.get(i.table)
             tb.columns[i.name] = i
+        for kp_nm, kp in self.keyspaces.iteritems():
+            for tbl_nm, tbl in kp.tables.iteritems():
+                tbl.categorize_columns()
 
         self.session.row_factory = self.panda_factory
 
