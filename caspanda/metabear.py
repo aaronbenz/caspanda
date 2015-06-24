@@ -60,34 +60,34 @@ class TableMeta(object):
         return [x[1] for x in seq]
 
     def categorize_columns(self):
-        partition_cols = []
-        clustering_cols = []
-        regular_cols = []
-        static_cols = []
+        self.partition_cols = []
+        self.clustering_cols = []
+        self.regular_cols = []
+        self.static_cols = []
 
         for i in self.columns.itervalues():
             if i.cql_type == "partition_key":
-                partition_cols.append(i)
+                self.partition_cols.append(i)
                 next
             if i.cql_type == "clustering_key":
-                clustering_cols.append(i)
+                self.clustering_cols.append(i)
                 next
             if i.cql_type == "regular":
-                regular_cols.append(i)
+                self.regular_cols.append(i)
                 next
             if i.cql_type == "static":
-                static_cols.append(i)
+                self.static_cols.append(i)
                 next
 
-        partition_cols = self.sort_columns(partition_cols)
-        clustering_cols = self.sort_columns(clustering_cols, reverse=True)
-        cluster_str = regular_cols
-        for i in clustering_cols:
+        self.partition_cols = self.sort_columns(self.partition_cols)
+        self.clustering_cols = self.sort_columns(self.clustering_cols, reverse=True)
+        cluster_str = self.regular_cols
+        for i in self.clustering_cols:
             cluster_str = [i, cluster_str]
 
         #partition_cols = paste([i.name for i in partition_cols])
 
-        return partition_cols,[cluster_str, static_cols]
+        return self.partition_cols,[cluster_str, self.static_cols]
 
 #TODO utilize TableMeta.describe to implement the same thing for keyspaces
 class KeyspaceMeta(object):
