@@ -2,7 +2,7 @@
 This file is meant to some valuable information about a cassandra table
 """
 from caspanda.utils import paste, print_ls
-
+from cassandra.cqltypes import lookup_casstype
 class ColumnMeta(object):
     keyspace = None
     """
@@ -29,13 +29,11 @@ class ColumnMeta(object):
         self.index_options = index_options
         self.index_type = index_type
         self.cql_type = cql_type
+        self.validator = validator
 
-    def describe(self):
-        """
-        Describes the column in a print friendly manner
-        :return:
-        """
-        pass
+    def __repr__(self):
+        return "{0} {1} {2}".format(self.name, lookup_casstype(self.validator).typename, self.cql_type if self.cql_type!="regular" else "")
+
 class TableMeta(object):
     keyspace = None
     name = None
@@ -50,7 +48,7 @@ class TableMeta(object):
     def add_column(self, x):
         self.columns.append(x)
 
-    def describe(self, *args, **kwargs):
+    def __repr__(self, *args, **kwargs):
         """ Recursively prints nested lists."""
         return print_ls(self.categorize_columns())
 
@@ -87,7 +85,7 @@ class TableMeta(object):
         for i in clustering_cols:
             cluster_str = [i, cluster_str]
 
-        partition_cols = paste([i.name for i in partition_cols])
+        #partition_cols = paste([i.name for i in partition_cols])
 
         return partition_cols,[cluster_str, static_cols]
 

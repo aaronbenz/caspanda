@@ -36,14 +36,14 @@ class BaseTestInput(unittest.TestCase):
             distributor_lead text static,
             PRIMARY KEY ((make, state), day, event_time));""")
 
-class TestDescribe(BaseTestInput):
+#class TestDescribe(BaseTestInput):
 
-    def setUp(self):
-        super(TestDescribe, self).setUp()
-
-    def test_single_table(self):
-        out = "make, state\n\t\tday\n\t\t\tevent_time\n\t\t\t\tdealership\n\t\t\t\tyear\n\t\t\t\tsalesman\n\t\tdistributor_lead\n\t\taccount_lead\n"
-        self.assertEqual(out, self.cl.keyspaces["tests"].tables["sold_cars"].describe())
+    # def setUp(self):
+    #     super(TestDescribe, self).setUp()
+    #
+    # def test_single_table(self):
+    #     out = "make, state\n\t\tday\n\t\t\tevent_time\n\t\t\t\tdealership\n\t\t\t\tyear\n\t\t\t\tsalesman\n\t\tdistributor_lead\n\t\taccount_lead\n"
+    #     self.assertEqual(out, self.cl.keyspaces["tests"].tables["sold_cars"])
 
 class TestColumnStructure(BaseTestInput):
     def setUp(self):
