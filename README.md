@@ -121,7 +121,7 @@ we called a CassandraFrame), in `bin/example.py`
 Example of using Caspanda for selecting data
 ----
 Running a select from a Cassandra table will automatically return a Pandas Dataframe, even for simple selects.
-Let's say you have a keyspace called 'tr_data' and you create one table 'tr_minute' with the following columns:
+Let's say you have a keyspace called `tr_data` and you create one table `tr_minute` with the following columns:
 
 ```
 cqlsh:tr_data> create table tr_minute (
@@ -131,7 +131,7 @@ cqlsh:tr_data> create table tr_minute (
  ric text static,
  PRIMARY KEY (ccypair, gmt_timestamp) );
 ```
-Connect to the Cassandra database as usual, then switch to the 'tr_data' keyspace. Any keywords controlling the connection such as the port or using compression are added as arguments to the initial CasPanda() call.
+Connect to the Cassandra database as usual, then switch to the `tr_data` keyspace. Any keywords controlling the connection such as the `port` or using `compression` are added as arguments to the initial CasPanda() call.
 ```python
 from caspanda.bear import CasPanda
 cl = CasPanda(contact_points=['105.150.100.25',], port=9042, compression=True)
@@ -198,9 +198,9 @@ The dataframe returned is exactly the same layout as the table, though the panda
 ccyA.set_index('gmt_timestamp')
 ```
 
-Large result sets
+*Large result sets*
 
-By default the underlying python driver will switch to using page-result sets if the number of returned rows is greater than 5,000 row. This will not currently work with caspanda, because the results are not automatically returned by cassandra. the db 'waits' until the driver starts to request the results by page. To get around this you can increase the default select size:
+By default the underlying python driver will switch to using paged-result sets if the number of returned rows is greater than 5,000 rows. This will not currently work with caspanda, because the results are not automatically returned by cassandra. The db 'waits' until the driver starts to request the results by page. To get around this you can increase the default select size:
 
 ```python
 cpsession.default_fetch_size = 50000
@@ -208,9 +208,9 @@ cpsession.default_fetch_size = 50000
 
 However note that cassandra also has a default _server-side_ read timeout of 5 seconds. If you cannot retrieve all rows within this limit you will be timed out.
 
-Parallel sessions
+*Parallel sessions*
 
-If you need to select basic data that does not really make sense in a dataframe (for instance a string of values to be re-used in another select), you can create another 'parallel' cassandra session:
+If you need to select basic data that does not really make sense in a dataframe (for instance a string of values to be re-used in another select), you can create another 'parallel' cassandra session, at the same time:
 
 ```python
 from cassandra.cluster import Cluster
@@ -225,7 +225,7 @@ for row in cccys:
 print ccy_string
 'USDKRW,USDRUB,AEDUSD,USDTWD,USDMYR,USDARS,USDCHF,USDSAR,USDPEN,GBPUSD...'
 ```
-and the results can be pulled directly from the response..
+and the results can be pulled directly from the response. You can use both in the same session, according to the type of results needed..
 
 Installation
 ----
