@@ -118,6 +118,31 @@ With that being said, please feel free to reach out to us for comments/suggestio
 There are also some more examples for calling data from Cassandra and inserting it back using only a Pandas Dataframe (which
 we called a CassandraFrame), in `bin/example.py`
 
+Selecting data
+----
+Running a Select from a Cassandra table will automatically return a Pandas Dataframe
+Let's say you have a keyspace called 'tr_data' and you create one table 'tr_minute' with the following columns:
+
+```
+cqlsh:tr_data> create table tr_minute (
+ ccypair text,
+ gmt_timestamp timestamp,
+ mid_rate double,
+ ric text static,
+ PRIMARY KEY (ccypair, gmt_timestamp) );
+```
+If the Cassandra database is running on localhost, you can connect using connect() as usual, then switch to the 'tr_data' keyspace. Any keywords controlling the connection such as the port or using compression are added as arguments to the initial CasPanda() call.
+```python
+from caspanda.bear import CasPanda
+cl = CasPanda(compression=True)
+cpsession = cl.connect()
+cpsession.set_keyspace('tr_data')
+select_ccys_distinct = """select distinct ccypair from tr_minute"""
+ccys = cpsession.execute(select_ccys_distinct)
+ccys.head()
+```
+
+
 Installation
 ----
 `$ python setup.py install` or `$ pip install -e .`
