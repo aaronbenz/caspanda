@@ -118,9 +118,9 @@ With that being said, please feel free to reach out to us for comments/suggestio
 There are also some more examples for calling data from Cassandra and inserting it back using only a Pandas Dataframe (which
 we called a CassandraFrame), in `bin/example.py`
 
-Selecting data
+Example of using Caspanda for selecting data
 ----
-Running a Select from a Cassandra table will automatically return a Pandas Dataframe
+Running a select from a Cassandra table will automatically return a Pandas Dataframe, even for simple selects.
 Let's say you have a keyspace called 'tr_data' and you create one table 'tr_minute' with the following columns:
 
 ```
@@ -131,16 +131,46 @@ cqlsh:tr_data> create table tr_minute (
  ric text static,
  PRIMARY KEY (ccypair, gmt_timestamp) );
 ```
-If the Cassandra database is running on localhost, you can connect using connect() as usual, then switch to the 'tr_data' keyspace. Any keywords controlling the connection such as the port or using compression are added as arguments to the initial CasPanda() call.
+Connect to the Cassandra database as usual, then switch to the 'tr_data' keyspace. Any keywords controlling the connection such as the port or using compression are added as arguments to the initial CasPanda() call.
 ```python
 from caspanda.bear import CasPanda
-cl = CasPanda(compression=True)
+cl = CasPanda(contact_points=['105.150.100.25',], port=9042, compression=True)
 cpsession = cl.connect()
 cpsession.set_keyspace('tr_data')
 select_ccys_distinct = """select distinct ccypair from tr_minute"""
 ccys = cpsession.execute(select_ccys_distinct)
 ccys.head()
 ```
+<table width="30%" border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="1" cellpadding="0"><thead>
+<tr>
+<td></td>
+<td>
+<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">ccypair</span></p></td></tr></thead>
+<tr>
+<td>
+<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">0</span></p></td>
+<td>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">USDKRW</p></td></tr>
+<tr>
+<td>
+<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">1</span></p></td>
+<td>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">USDRUB</p></td></tr>
+<tr>
+<td>
+<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">2</span></p></td>
+<td>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">AEDUSD</p></td></tr>
+<tr>
+<td>
+<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">3</span></p></td>
+<td>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">USDTWD</p></td></tr>
+<tr>
+<td>
+<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">4</span></p></td>
+<td>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">USDMYR</p></td></tr></table>
 
 
 Installation
