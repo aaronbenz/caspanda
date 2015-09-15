@@ -142,35 +142,59 @@ ccys = cpsession.execute(select_ccys_distinct)
 ccys.head()
 ```
 <table width="30%" border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="1" cellpadding="0"><thead>
+<tr><td></td><td>ccypair</td></tr></thead>
+<tr><td>0</td><td>USDKRW</td></tr>
+<tr><td>1</td><td>USDRUB</td></tr>
+<tr><td>2</td><td>AEDUSD</td></tr>
+<tr><td>3</td><td>USDTWD</td></tr>
+<tr><td>4</td><td>USDMYR</td></tr></table>
+
+Now select some data from the table
+
+```python
+select_minute_wlimit = """select ccypair,gmt_timestamp,ric,mid_rate from tr_minute where ccypair = 'EURUSD' and gmt_timestamp >= '2000-01-01 00:00:00+0000' and gmt_timestamp < '2000-02-01 00:00:00+0000' LIMIT 5"""
+ccyA = cpsession.execute(select_minute_wlimit)
+ccyA.head()
+```
+<table width="30%" border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"><thead>
 <tr>
 <td></td>
-<td>
-<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">ccypair</span></p></td></tr></thead>
+<td>ccypair</td><td>gmt_timestamp</td><td>ric</td><td>mid_rate</td></tr></thead>
+<tr><td>0</td>
+<td>EURUSD</td>
+<td>2015-05-01 00:00:00.001000</td>
+<td>EUR=</td>
+<td>1.121370</td></tr>
 <tr>
-<td>
-<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">0</span></p></td>
-<td>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">USDKRW</p></td></tr>
+<td>1</td>
+<td>EURUSD</td>
+<td>2015-05-01 00:01:00.001000</td>
+<td>EUR=</td>
+<td>1.120950</td></tr>
 <tr>
-<td>
-<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">1</span></p></td>
-<td>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">USDRUB</p></td></tr>
+<td>2</td>
+<td>EURUSD</td>
+<td>2015-05-01 00:02:00.001000</td>
+<td>EUR=</td>
+<td>1.121032</td></tr>
 <tr>
-<td>
-<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">2</span></p></td>
-<td>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">AEDUSD</p></td></tr>
+<td>3</td>
+<td>EURUSD</td>
+<td>2015-05-01 00:03:00.001000</td>
+<td>EUR=</td>
+<td>1.121001</td></tr>
 <tr>
-<td>
-<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">3</span></p></td>
-<td>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">USDTWD</p></td></tr>
-<tr>
-<td>
-<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">4</span></p></td>
-<td>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">USDMYR</p></td></tr></table>
+<td>4</td>
+<td>EURUSD</td>
+<td>2015-05-01 00:04:00.001000</td>
+<td>EUR=</td>
+<td>1.120950</td></tr></table>
+
+The dataframe returned is exactly the same layout as the table, though the pandas index is just the row number. If you want the index to be the timestamp, this has to be done explicitly:
+
+```python
+ccyA.set_index('gmt_timestamp')
+```
 
 
 Installation
