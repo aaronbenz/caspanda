@@ -149,10 +149,12 @@ ccys.head()
 <tr><td>3</td><td>USDTWD</td></tr>
 <tr><td>4</td><td>USDMYR</td></tr></table>
 
-Now select some data from the table
+Now select some time-series data from the table:
 
 ```python
-select_minute_wlimit = """select ccypair,gmt_timestamp,ric,mid_rate from tr_minute where ccypair = 'EURUSD' and gmt_timestamp >= '2000-01-01 00:00:00+0000' and gmt_timestamp < '2000-02-01 00:00:00+0000' LIMIT 5"""
+select_minute_wlimit = """select ccypair,gmt_timestamp,ric,mid_rate from tr_minute
+where ccypair = 'EURUSD' and gmt_timestamp >= '2015-05-01 00:00:00+0000'
+and gmt_timestamp < '2015-06-01 00:00:00+0000' LIMIT 5"""
 ccyA = cpsession.execute(select_minute_wlimit)
 ccyA.head()
 ```
@@ -196,6 +198,34 @@ The dataframe returned is exactly the same layout as the table, though the panda
 ccyA.set_index('gmt_timestamp')
 ```
 
+Large result sets
+
+By default the underlying python driver will switch to using page-result sets if the number of returned rows is greater than 5,000 row. This will not currently work with caspanda, because the results are not automatically returned by cassandra. the db 'waits' until the driver starts to request the results by page. To get around this you can increase the default select size:
+
+```python
+cpsession.default_fetch_size = 50000
+```
+
+However note that cassandra also has a default _server-side_ read timeout of 5 seconds. If you cannot retrieve all rows within this limit you will be timed out.
+
+Parallel sessions
+
+If you need to select basic data that does not really make sense in a dataframe (for instance a string of values to be re-used in another select), you can create another 'parallel' cassandra session:
+
+```python
+from cassandra.cluster import Cluster
+cconnection = Cluster()
+csession = cconnection.connect()
+csession.set_keyspace('tr_data')
+cccys = csession.execute(select_ccys_distinct)
+# This returns a list of cassandra 'row-type'
+ccy_string = ''
+for row in cccys:
+    ccy_string = ccy_string + row.ccypair +','
+print ccy_string
+'USDKRW,USDRUB,AEDUSD,USDTWD,USDMYR,USDARS,USDCHF,USDSAR,USDPEN,GBPUSD...'
+```
+and the results can be pulled directly from the response..
 
 Installation
 ----
