@@ -118,6 +118,115 @@ With that being said, please feel free to reach out to us for comments/suggestio
 There are also some more examples for calling data from Cassandra and inserting it back using only a Pandas Dataframe (which
 we called a CassandraFrame), in `bin/example.py`
 
+Example of using Caspanda for selecting data
+----
+Running a select from a Cassandra table will automatically return a Pandas Dataframe, even for simple selects.
+Let's say you have a keyspace called `tr_data` and you create one table `tr_minute` with the following columns:
+
+```
+cqlsh:tr_data> create table tr_minute (
+ ccypair text,
+ gmt_timestamp timestamp,
+ mid_rate double,
+ ric text static,
+ PRIMARY KEY (ccypair, gmt_timestamp) );
+```
+Connect to the Cassandra database as usual, then switch to the `tr_data` keyspace. Any keywords controlling the connection such as the `port` or using `compression` are added as arguments to the initial CasPanda() call.
+```python
+from caspanda.bear import CasPanda
+cl = CasPanda(contact_points=['105.150.100.25',], port=9042, compression=True)
+cpsession = cl.connect()
+cpsession.set_keyspace('tr_data')
+select_ccys_distinct = """select distinct ccypair from tr_minute"""
+ccys = cpsession.execute(select_ccys_distinct)
+ccys.head()
+```
+<table width="30%" border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="1" cellpadding="0"><thead>
+<tr><td></td><td>ccypair</td></tr></thead>
+<tr><td>0</td><td>USDKRW</td></tr>
+<tr><td>1</td><td>USDRUB</td></tr>
+<tr><td>2</td><td>AEDUSD</td></tr>
+<tr><td>3</td><td>USDTWD</td></tr>
+<tr><td>4</td><td>USDMYR</td></tr></table>
+
+Now select some time-series data from the table:
+
+```python
+select_minute_wlimit = """select ccypair,gmt_timestamp,ric,mid_rate from tr_minute
+where ccypair = 'EURUSD' and gmt_timestamp >= '2015-05-01 00:00:00+0000'
+and gmt_timestamp < '2015-06-01 00:00:00+0000' LIMIT 5"""
+ccyA = cpsession.execute(select_minute_wlimit)
+ccyA.head()
+```
+<table width="30%" border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"><thead>
+<tr>
+<td></td>
+<td>ccypair</td><td>gmt_timestamp</td><td>ric</td><td>mid_rate</td></tr></thead>
+<tr><td>0</td>
+<td>EURUSD</td>
+<td>2015-05-01 00:00:00.001000</td>
+<td>EUR=</td>
+<td>1.121370</td></tr>
+<tr>
+<td>1</td>
+<td>EURUSD</td>
+<td>2015-05-01 00:01:00.001000</td>
+<td>EUR=</td>
+<td>1.120950</td></tr>
+<tr>
+<td>2</td>
+<td>EURUSD</td>
+<td>2015-05-01 00:02:00.001000</td>
+<td>EUR=</td>
+<td>1.121032</td></tr>
+<tr>
+<td>3</td>
+<td>EURUSD</td>
+<td>2015-05-01 00:03:00.001000</td>
+<td>EUR=</td>
+<td>1.121001</td></tr>
+<tr>
+<td>4</td>
+<td>EURUSD</td>
+<td>2015-05-01 00:04:00.001000</td>
+<td>EUR=</td>
+<td>1.120950</td></tr></table>
+
+The dataframe returned is exactly the same layout as the table, though the pandas index is just the row number. If you want the index to be the timestamp, this has to be done explicitly:
+
+```python
+ccyA.set_index('gmt_timestamp')
+```
+
+*Large result sets*
+
+By default the underlying python driver will switch to using paged-result sets if the number of returned rows is greater than 5,000 rows. This will not currently work with caspanda, because the results are not automatically returned by cassandra. The db 'waits' until the driver starts to request the results by page. To get around this you can increase the default select size:
+
+```python
+cpsession.default_fetch_size = 50000
+```
+
+However note that cassandra also has a default _server-side_ read timeout of 5 seconds. If you cannot retrieve all rows within this limit you will be timed out.
+
+*Parallel sessions*
+
+If you need to select basic data that does not really make sense in a dataframe (for instance a string of values to be re-used in another select), you can create another 'parallel' cassandra session, at the same time:
+
+```python
+from cassandra.cluster import Cluster
+cconnection = Cluster()
+csession = cconnection.connect()
+csession.set_keyspace('tr_data')
+cccys = csession.execute(select_ccys_distinct)
+# This returns a list of cassandra 'row-type'
+ccy_string = ''
+for row in cccys:
+    ccy_string = ccy_string + row.ccypair +','
+print ccy_string
+'USDKRW,USDRUB,AEDUSD,USDTWD,USDMYR,USDARS,USDCHF,USDSAR,USDPEN,GBPUSD...'
+```
+and the results can be pulled directly from the response. You can use both in the same session, according to the type of results needed..
+
 Installation
 ----
 `$ python setup.py install` or `$ pip install -e .`
