@@ -47,11 +47,10 @@ class TestQuery(BaseTestInput):
         self.frame.create_cql_insert()
 
 
-
-
     def test_all_attributes(self):
         self.frame.insert_async()
-        self.cf = self.session.execute("SELECT * FROM tester")
+        result_set = self.session.execute("SELECT * FROM tester") 
+        self.cf = result_set._current_rows
 
         self.assertEqual(len(self.cf), 3)
         self.assertIsInstance(self.cf, CassandraFrame)
