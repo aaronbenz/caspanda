@@ -7,7 +7,7 @@ and provides an interface between pandas and Cassandra.
 """
 from cassandra.cluster import Cluster
 from caspanda.metabear import ColumnMeta, KeyspaceMeta, TableMeta
-from cassandra.decoder import dict_factory
+from cassandra.query import dict_factory
 from cassandra.cluster import _shutdown_cluster
 
 from caspanda.bamboo import CassandraFrame
