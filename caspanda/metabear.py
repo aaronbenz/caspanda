@@ -3,6 +3,8 @@ This file is meant to some valuable information about a cassandra table
 """
 from caspanda.utils import paste, print_ls
 from cassandra.cqltypes import lookup_casstype
+
+from future.utils import itervalues
 class ColumnMeta(object):
     keyspace = None
     """
@@ -65,7 +67,7 @@ class TableMeta(object):
         self.regular_cols = []
         self.static_cols = []
 
-        for i in self.columns.itervalues():
+        for i in itervalues(self.columns):
             if i.cql_type == "partition_key":
                 self.partition_cols.append(i)
                 next

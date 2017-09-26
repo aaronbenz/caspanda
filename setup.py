@@ -12,6 +12,7 @@ setup(
         'pandas',
         'nose',
         'blist',
+        'future'
     ],
     url='',
     license='MIT',

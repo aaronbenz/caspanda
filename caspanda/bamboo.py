@@ -11,8 +11,11 @@ in order to support pivot- and melt-like operations.
 """
 import logging
 import pandas as pd
-from Queue import Queue
-from Queue import Empty
+try:
+    import Queue as queue
+except ImportError:
+    # Python 3
+    import queue
 from cassandra.cluster import Session
 
 from caspanda.utils import paste
@@ -41,7 +44,7 @@ class CassandraFrame(pd.DataFrame):
 
         self.table         = table
         self.cql           = kwargs.get('cql', None)
-        self.insert_queue  = Queue()
+        self.insert_queue  = queue.Queue()
  
         self.set_cql_columns(cql_columns)
 
@@ -68,7 +71,10 @@ class CassandraFrame(pd.DataFrame):
 
         statement = "INSERT INTO " + self.table + "(" + paste(self._cql_columns) + ") VALUES (" + paste(["?"] * len(self.columns)) + ");"
 
+
+
         self.statement_input   = self.session.prepare(statement)
+
         self._prepared_columns = self._cql_columns
 
         return
@@ -137,11 +143,11 @@ class CassandraFrame(pd.DataFrame):
             """
             try:
                 i = self.insert_queue.get()
-            except Empty:
+            except queue.Empty:
                 return
 
-            print "Inserting", self.iloc[i].name, " ..." 
-            print "-----------------------------------------------"
+            print("Inserting "+self.iloc[i].name+" ...")
+            print("-----------------------------------------------")
 
             future = self.session.execute_async(self.statement_input.bind(self.loc[i, self._prepared_columns]))
 

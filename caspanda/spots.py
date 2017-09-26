@@ -3,7 +3,10 @@ A Panda has spots, and so does data. This is meant to define ways to more easily
 """
 
 from cassandra.metadata import TableMetadata, KeyspaceMetadata
-from exceptions import InputError
+try:
+    from exceptions import SyntaxError
+except ImportError:
+    pass
 
 def describe(x):
     """
@@ -13,7 +16,7 @@ def describe(x):
     :return: A json description of the tables
     """
 
-    raise(InputError)
+    raise(SyntaxError)
     pass
 
 def _describe_table(x):
