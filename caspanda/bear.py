@@ -8,9 +8,10 @@ and provides an interface between pandas and Cassandra.
 from cassandra.cluster import Cluster
 from caspanda.metabear import ColumnMeta, KeyspaceMeta, TableMeta
 from cassandra.query import dict_factory
-from cassandra.cluster import _shutdown_cluster
 
 from caspanda.bamboo import CassandraFrame
+
+from future.utils import iteritems
 
 #TODO: Add describe function to name any keyspace or keyspace + table(s) to utilize MetaTable.describe function
 class CasPanda(Cluster):
@@ -83,8 +84,8 @@ class CasPanda(Cluster):
             #finally add/overwrite column into table
             tb = kp.tables.get(i.table)
             tb.columns[i.name] = i
-        for kp_nm, kp in self.keyspaces.iteritems():
-            for tbl_nm, tbl in kp.tables.iteritems():
+        for kp_nm, kp in iteritems(self.keyspaces):
+            for tbl_nm, tbl in iteritems(kp.tables):
                 tbl.categorize_columns()
 
         self.session.row_factory = self.panda_factory
